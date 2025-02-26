@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en"> 
+ <head> 
+  <meta charset="UTF-8"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+  <title>Interactive Pink Heart</title> 
+  <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #fff5f8;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        .heart-container {
+            position: relative;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .heart {
+            position: relative;
+            width: 150px; /* Size of the heart */
+            height: 150px; /* Size of the heart */
+            transition: all 0.4s ease-in-out;
+            overflow: hidden; /* Hide overflow to avoid cropping */
+        }
+
+        .heart.open {
+            transform: scale(1.2); /* Increase size on open */
+            box-shadow: 0px 0px 40px rgba(255, 105, 180, 1); /* Increased glow effect */
+        }
+
+        .heart svg {
+            position: absolute;
+            width: 100%; /* Adjust to fit inside heart */
+            height: 100%; /* Adjust to fit inside heart */
+            fill: pink; /* Color of the heart */
+            transition: opacity 0.4s ease-in-out; /* Smooth transition for the SVG */
+        }
+
+        .heart img {
+            position: absolute;
+            width: 100%; /* Cover heart area */
+            height: 100%; /* Cover heart area */
+            object-fit: cover; /* Ensure the image covers the heart without distortion */
+            opacity: 0; /* Start hidden */
+            transition: opacity 0.4s ease-in-out; /* Smooth transition for the image */
+        }
+
+        .heart.open img {
+            opacity: 1; /* Show image when heart is pressed */
+        }
+
+        .message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            font-size: 18px;
+            font-weight: bold;
+            color: #d63384;
+            text-align: center;
+            transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
+            opacity: 0;
+            width: 180px;
+            z-index: 1; /* Ensure message appears above the heart */
+        }
+
+        .heart.open + .message {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+
+        .floating-effect {
+            position: absolute;
+            opacity: 0;
+            animation: floatUp 3s ease-in-out forwards;
+            pointer-events: none; /* Ensure hearts don't block clicks */
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) scale(0.5);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-200px) scale(1);
+                opacity: 0;
+            }
+        }
+    </style> 
+ </head> 
+ <body> 
+  <div class="heart-container" onclick="toggleHeart(this)"> 
+   <div class="heart"> 
+    <svg viewbox="0 0 24 24"> <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="pink" /> 
+    </svg> 
+    <img src="https://i.imgur.com/x1Tpc0x.jpeg" alt="Insect Image"> <!-- Inserted Image --> 
+   </div> 
+   <div class="message">
+     YOU ARE MY WOLRD, MY HEART, MY HOME. 
+   </div> 
+  </div> 
+  <script>
+        function toggleHeart(container) {
+            let heart = container.querySelector('.heart');
+            let message = container.querySelector('.message');
+            heart.classList.toggle('open');
+
+            // Show image after heart is pressed
+            if (heart.classList.contains('open')) {
+                const innerImage = heart.querySelector('img');
+                innerImage.style.opacity = '1'; // Show image
+
+                message.style.transform = "translate(-50%, -50%) scale(1)";
+                message.style.opacity = "1";
+            } else {
+                const innerImage = heart.querySelector('img');
+                innerImage.style.opacity = '0'; // Hide image
+
+                message.style.transform = "translate(-50%, -50%) scale(0)";
+                message.style.opacity = "0";
+            }
+
+            createFloatingEffects(); // Create floating effects
+        }
+
+        function createFloatingEffects() {
+            const symbols = ["💞", "🩷", "♥️", "🥀", "🌷"]; // Array of floating symbols
+            const images = [
+                "https://i.imgur.com/KQlkkrk.jpeg",
+                "https://i.imgur.com/Jjxf435.jpeg",
+                "https://i.imgur.com/9EvyA1c.jpeg",
+                "https://i.imgur.com/ptI3HWj.jpeg"
+            ]; // Array of floating images
+
+            for (let i = 0; i < 10; i++) { // Increased quantity to 10
+                const isSymbol = Math.random() < 0.5; // Randomly decide to create a symbol or an image
+                let effect = document.createElement("div");
+                effect.classList.add("floating-effect");
+                effect.style.left = `${Math.random() * window.innerWidth}px`;
+                effect.style.top = `${Math.random() * window.innerHeight + 50}px`;
+                effect.style.fontSize = `${Math.random() * 20 + 30}px`; // Larger random size
+                effect.style.animationDuration = `${Math.random() * 2 + 2}s`;
+
+                if (isSymbol) {
+                    effect.innerHTML = symbols[Math.floor(Math.random() * symbols.length)]; // Randomly select a symbol
+                } else {
+                    const img = document.createElement("img");
+                    img.src = images[Math.floor(Math.random() * images.length)]; // Randomly select an image
+                    img.style.width = "50px"; // Adjust image size
+                    img.style.height = "50px"; // Adjust image size
+                    img.style.objectFit = "cover"; // Cover image properly
+                    effect.appendChild(img);
+                }
+
+                document.body.appendChild(effect);
+
+                setTimeout(() => {
+                    effect.remove();
+                }, 3000);
+            }
+        }
+    </script> 
+ 
+</body></html>
